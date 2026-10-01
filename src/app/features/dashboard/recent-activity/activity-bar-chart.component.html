@@ -1,0 +1,68 @@
+<figure class="chart" [attr.aria-label]="summaryLabel()">
+  <figcaption class="chart-header">
+    <div class="flex flex-col gap-1">
+      <p class="text-label-lg font-medium text-ink-950">{{ data().total }} Activities</p>
+      <p class="text-para-sm font-book text-ink-600">{{ data().period }}</p>
+    </div>
+    <ul class="legend" role="list" aria-label="Legend">
+      @for (s of series; track s.key) {
+        <li class="flex items-center gap-1.5">
+          <span class="size-2 rounded-full" [style.background]="s.color" aria-hidden="true"></span>
+          <span class="text-para-xs font-book text-ink-legend">{{ s.label }}</span>
+        </li>
+      }
+    </ul>
+  </figcaption>
+
+  <div class="chart-body">
+    <div class="y-axis" aria-hidden="true">
+      @for (t of yTicks; track t) {
+        <span>{{ t }}</span>
+      }
+    </div>
+
+    <div class="plot">
+      <div class="gridlines" aria-hidden="true">
+        <span></span><span class="is-dashed"></span><span class="is-dashed"></span><span></span>
+      </div>
+
+      <ul class="groups" role="list">
+        @for (day of data().days; track day.day; let last = $last; let i = $index) {
+          <li
+            class="group"
+            tabindex="0"
+            [attr.aria-label]="dayLabel(day)"
+            [class.is-active]="active() === day.day"
+            [class.is-dimmed]="active() !== null && active() !== day.day"
+            (mouseenter)="active.set(day.day)"
+            (mouseleave)="active.set(null)"
+            (focus)="active.set(day.day)"
+            (blur)="active.set(null)"
+          >
+            <div class="bars" aria-hidden="true">
+              @for (s of series; track s.key) {
+                <span class="bar" [style.height.px]="day[s.key] * unitPx" [style.background]="s.color"></span>
+              }
+            </div>
+            <span class="x-label" aria-hidden="true">{{ day.day }}</span>
+
+            @if (active() === day.day) {
+              <div class="tooltip" [class.is-left]="i >= data().days.length - 2" role="presentation">
+                <p class="mb-1.5 text-label-xs font-medium text-ink-950">
+                  {{ day.day }} <span class="font-book text-ink-600">· {{ total(day) }} total</span>
+                </p>
+                @for (s of series; track s.key) {
+                  <p class="flex items-center gap-1.5 text-para-xs font-book text-ink-600">
+                    <span class="size-2 rounded-full" [style.background]="s.color"></span>
+                    <span class="flex-1">{{ s.label }}</span>
+                    <span class="font-medium text-ink-950">{{ day[s.key] }}</span>
+                  </p>
+                }
+              </div>
+            }
+          </li>
+        }
+      </ul>
+    </div>
+  </div>
+</figure>

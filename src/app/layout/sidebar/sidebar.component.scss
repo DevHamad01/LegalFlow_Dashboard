@@ -1,0 +1,238 @@
+@use '../../../styles/variables' as *;
+@use '../../../styles/mixins' as *;
+
+:host { display: contents; }
+
+// ───────────────── Panel ─────────────────
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  width: $sidebar-w;
+  height: 100vh;
+  height: 100dvh;
+  background: $surface-0;
+  border-right: 1px solid #f0f0f0;
+
+  &.is-ready { transition: width $duration $ease-smooth, transform $duration $ease-smooth; }
+
+  &.is-collapsed { width: $sidebar-w-collapsed; }
+
+  // Mobile off-canvas drawer: exactly the visible viewport (dvh, vh fallback), flex column with
+  // fixed header, scrollable nav (min-height 0) and a non-shrinking footer.
+  &.is-drawer {
+    z-index: 50;
+    top: 0;
+    bottom: auto;
+    height: 100vh;
+    height: 100dvh;
+    max-height: 100vh;
+    max-height: 100dvh;
+    .nav { flex: 1 1 0; padding-bottom: $space-12; overscroll-behavior: contain; }
+    width: min(#{$drawer-w}, 85vw);
+    transform: translateX(-100%);
+    box-shadow: none;
+    &.is-open {
+      transform: translateX(0);
+      box-shadow: 0 16px 40px -8px rgba(23, 23, 23, 0.24);
+    }
+    .nav-row { min-height: 40px; }
+    .logo-row { padding-right: 8px; }
+    // Footer sits clear of the bottom edge / iOS home indicator
+    .footer { padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)); }
+  }
+}
+
+.overlay {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity $duration $ease-smooth;
+  &.is-visible { opacity: 1; pointer-events: auto; }
+}
+
+// ───────────────── Logo row (52px) ─────────────────
+.logo-row {
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  height: $topbar-h;
+  padding: $space-12 $space-16;
+  border-bottom: 1px solid $stroke-200;
+
+  transition: padding $duration $ease-smooth;
+
+  // Collapsed: toggle is gone, the 85px logo is centred inside the 120px panel
+  .is-collapsed & { justify-content: center; padding-inline: 0; }
+}
+
+.logo-link {
+  display: inline-flex;
+  flex-shrink: 0; // the wordmark must never shrink / wrap / truncate
+  border-radius: $radius-4;
+  &:focus-visible { @include focus-ring(3px); }
+}
+
+// Collapsed: the logo is the expand button
+.logo-expand {
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: opacity 150ms;
+  &:hover { opacity: 0.8; }
+  &:active { opacity: 0.65; }
+}
+
+.toggle-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: $space-4;
+  border-radius: $radius-4;
+  color: $ink-950;
+  overflow: hidden;
+  transition:
+    background-color 150ms,
+    opacity 160ms $ease-smooth,
+    width $duration $ease-smooth,
+    padding $duration $ease-smooth,
+    visibility 0s linear 0s;
+  &:hover { background: $surface-50; }
+  &:active { background: $surface-200; }
+  &:focus-visible { @include focus-ring(2px); }
+
+  // Collapsed: fully hidden (not focusable, no width) — the logo takes over as the expand control
+  .is-collapsed & {
+    width: 0;
+    padding: 0;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition:
+      opacity 120ms $ease-smooth,
+      width $duration $ease-smooth,
+      padding $duration $ease-smooth,
+      visibility 0s linear $duration;
+  }
+}
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $radius-8;
+  color: $ink-600;
+  transition: background-color 150ms, color 150ms;
+  &:hover { background: $surface-50; color: $ink-950; }
+  &:active { background: $surface-200; }
+  &:focus-visible { @include focus-ring(2px); }
+}
+
+// ───────────────── Nav (16px gap below logo row, 16px side padding) ─────────────────
+.nav {
+  flex: 1 1 auto;
+  min-height: 0;
+  margin-top: $space-16;
+  padding: 0 $space-16 $space-8;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.nav-row {
+  display: flex;
+  align-items: center;
+  gap: $space-8;
+  width: 100%;
+  min-height: 36px;
+  padding: $space-6 $space-8;
+  border-radius: $radius-8;
+  color: $ink-600;
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 500;
+  letter-spacing: -0.09px;
+  text-align: left;
+  white-space: nowrap;
+  transition: background-color 150ms, color 150ms, padding $duration $ease-smooth;
+
+  &:hover { background: $surface-50; color: $ink-950; }
+  &:active { background: $surface-200; }
+  &:focus-visible { @include focus-ring(-2px); }
+
+  &.is-active { background: $surface-200; color: $ink-950; }
+  &.is-open { color: $ink-950; }
+  &.is-open .nav-chevron { transform: rotate(180deg); }
+
+  // Reports / Settings use 8×10 padding, 6px gap and 4px radius in the design
+  &--footer { gap: $space-6; min-height: 38px; padding: $space-8 $space-10; border-radius: $radius-4; }
+}
+
+.nav-label {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: opacity 160ms $ease-smooth;
+}
+
+.nav-chevron {
+  margin-left: -8px; // design: chevron is justified to the edge, no extra 8px gap
+  transition: transform $duration $ease-smooth, opacity 160ms;
+}
+
+// Expandable group (animated height via grid rows)
+.group {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows $duration $ease-smooth;
+  &.is-open { grid-template-rows: 1fr; }
+}
+.group-inner { min-height: 0; overflow: hidden; }
+
+// Collapsed (icons only): 18px icons centred in the 88px content box, 40px tap rows, even 4px gaps
+.is-collapsed {
+  .nav > ul,
+  .footer > ul { gap: $space-4; }
+  .nav-row,
+  .nav-row--footer {
+    min-height: 40px;
+    padding-left: calc((#{$sidebar-w-collapsed} - 32px - 18px) / 2);
+    padding-right: 0;
+    gap: 0;
+  }
+  .nav-label { opacity: 0; max-width: 0; flex: 0 0 0; }
+  .nav-chevron { opacity: 0; width: 0; }
+}
+
+// ───────────────── Footer ─────────────────
+.footer {
+  flex-shrink: 0;
+  padding: 0 $space-16 $space-8;
+  > ul { padding-bottom: $space-8; }
+}
+
+.user-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  padding: $space-8 $space-10;
+  color: $ink-600;
+  font-size: 15px;
+  line-height: 22px;
+  font-weight: 500;
+  letter-spacing: -0.09px;
+  white-space: nowrap;
+
+  .is-collapsed & { justify-content: center; gap: $space-6; padding-inline: 0; }
+}
+
+.user-menu { padding: 3px; border-radius: $radius-4; }
+.is-drawer .user-menu { width: 40px; height: 40px; }

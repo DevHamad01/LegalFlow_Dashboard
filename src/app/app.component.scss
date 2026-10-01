@@ -1,0 +1,31 @@
+@use '../styles/variables' as *;
+
+:host { display: block; min-height: 100vh; }
+
+// Main column follows the sidebar width with the same transition
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100vh;
+  padding-left: $sidebar-w;
+  transition: padding-left $duration $ease-smooth;
+
+  &.is-collapsed { padding-left: $sidebar-w-collapsed; }
+  &.is-mobile { padding-left: 0; }
+}
+
+.skip-link {
+  position: absolute;
+  left: 12px;
+  top: -48px;
+  z-index: 100;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: $ink-950;
+  color: $surface-0;
+  font-size: 14px;
+  font-weight: 500;
+  transition: top 150ms;
+  &:focus { top: 12px; }
+}

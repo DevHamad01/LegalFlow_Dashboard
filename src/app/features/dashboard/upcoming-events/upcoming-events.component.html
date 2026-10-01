@@ -1,0 +1,68 @@
+<lf-card-shell class="min-h-0 flex-1" title="Upcoming Events" icon="calendar-event">
+  <button cardActions lfButton="outline">Calendar</button>
+
+  <!-- Week strip -->
+  <div class="strip" role="tablist" aria-label="Week of 7 to 13 September 2026">
+    @for (day of days; track day.iso; let i = $index) {
+      <button
+        #tab
+        type="button"
+        role="tab"
+        class="day"
+        [id]="'day-tab-' + day.iso"
+        [class.is-selected]="day.iso === selected()"
+        [attr.aria-selected]="day.iso === selected()"
+        aria-controls="events-panel"
+        [attr.tabindex]="day.iso === selected() ? 0 : -1"
+        [attr.aria-label]="longWeekday(day) + ' ' + day.date + ', ' + eventCount(day) + (eventCount(day) === 1 ? ' event' : ' events')"
+        (click)="select(day.iso)"
+        (keydown)="onKeydown($event, i)"
+      >
+        <span class="weekday" aria-hidden="true">{{ day.weekday }}</span>
+        <span class="date" aria-hidden="true">{{ day.date }}</span>
+        @if (dots(day).length) {
+          <span class="dots" aria-hidden="true">
+            @for (d of dots(day); track d) {
+              <span class="dot"></span>
+            }
+          </span>
+        }
+      </button>
+    }
+  </div>
+
+  <!-- Event list for the selected day -->
+  <div
+    id="events-panel"
+    role="tabpanel"
+    class="panel"
+    [attr.aria-labelledby]="'day-tab-' + selected()"
+  >
+    <p class="sr-only" aria-live="polite">{{ events().length }} events on {{ selectedLabel() }}</p>
+    <lf-scroll-area class="list-area lf-fill" [label]="'Events on ' + selectedLabel()" [gap]="10">
+      @if (events().length) {
+        <ul class="flex flex-col gap-1" role="list">
+          @for (e of events(); track e.id) {
+            <li class="row">
+              <div class="flex min-w-0 flex-1 flex-col gap-1">
+                <p class="lf-title-clamp text-label-md font-medium text-ink-950" [attr.title]="e.title">{{ e.title }}</p>
+                <p class="text-para-sm font-book text-ink-600"><time>{{ e.time }}</time></p>
+              </div>
+              @if (e.hasMeeting) {
+                <button type="button" class="meet-btn" [attr.aria-label]="'Join video call: ' + e.title">
+                  <lf-icon name="video" [size]="27" />
+                </button>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <lf-empty-state
+          icon="calendar-empty"
+          [title]="'No events on ' + selectedLabel()"
+          hint="Pick another day or open the calendar to schedule one."
+        />
+      }
+    </lf-scroll-area>
+  </div>
+</lf-card-shell>

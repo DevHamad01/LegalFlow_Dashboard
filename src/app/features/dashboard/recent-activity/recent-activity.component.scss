@@ -1,0 +1,50 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+// Desktop: fills the remaining card height. Below 1024px: capped height, scrolls inside.
+.list-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  @include down($bp-lg) { flex: 0 1 auto; max-height: 320px; }
+}
+
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $space-12;
+  padding: $space-12;
+  border-radius: $radius-8;
+  background: $surface-0;
+}
+
+// Link / file chip: white, 1px #e9eaeb border, 6px radius, 4px padding, 6px gap, xs shadow
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-6;
+  max-width: 55%;
+  min-width: 0;
+  flex-shrink: 0;
+  padding: $space-4;
+  border: 1px solid #e9eaeb;
+  border-radius: $radius-6;
+  background: $surface-0;
+  box-shadow: 0 1px 1px rgba(10, 13, 18, 0.05);
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 424;
+  letter-spacing: -0.028px;
+  transition: border-color 150ms, background-color 150ms;
+
+  &:hover { background: $surface-50; border-color: $stroke-300; }
+  &:focus-visible { @include focus-ring(2px); }
+
+  &--link { color: $brand-500; padding-left: 5px; }
+}
+
+// Narrow cards (mobile): stack title and chip, chip can use the full row width
+@container (max-width: 420px) {
+  .row { flex-direction: column; gap: $space-8; }
+  .chip { max-width: 100%; }
+}

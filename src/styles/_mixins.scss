@@ -1,0 +1,30 @@
+@use 'variables' as *;
+
+// Mobile-first media helpers that match the Tailwind screens.
+@mixin up($bp) {
+  @media (min-width: $bp) { @content; }
+}
+@mixin down($bp) {
+  @media (max-width: ($bp - 0.02px)) { @content; }
+}
+
+@mixin focus-ring($offset: 2px) {
+  outline: 2px solid $brand-500;
+  outline-offset: $offset;
+}
+
+@mixin truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin hide-native-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) { @content; }
+}

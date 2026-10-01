@@ -1,0 +1,69 @@
+@use 'styles/variables' as *;
+@use 'styles/mixins' as *;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html { -webkit-text-size-adjust: 100%; }
+  html, body { height: 100%; }
+  body {
+    @apply bg-surface-0 font-sans text-ink-950 antialiased;
+    min-width: 320px;
+    overflow-x: hidden;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+  button { -webkit-tap-highlight-color: transparent; }
+  :focus-visible { @include focus-ring(2px); border-radius: 6px; }
+  ::selection { background: $brand-a10; color: $brand-800; }
+}
+
+@layer components {
+  // Section title used in every card header (Urbanist 20/28, weight 540)
+  .lf-card-title { @apply font-title text-title-h6 font-medium-2 text-ink-950; }
+}
+
+@include reduced-motion {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+// Thin styled scrollbar for native scroll areas (sidebar nav, mobile fallbacks)
+.lf-thin-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #{$surface-300} transparent;
+  &::-webkit-scrollbar { width: 6px; height: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb { background: $surface-300; border-radius: 999px; }
+  &::-webkit-scrollbar-thumb:hover { background: $ink-400; }
+}
+
+// Desktop: scroll lists must NOT add their content height to the card — they only fill the
+// space left over. `contain: size` removes their intrinsic size so the column heights come
+// from the design values (578 / 366 / 371 / 417) and both columns end on the same line.
+@media (min-width: 1024px) {
+  .lf-fill { contain: size; flex: 1 1 0 !important; min-height: 0; }
+}
+
+// Figma "inside" stroke: drawn over the edge without adding to the box size
+.lf-inside-stroke { outline: 1px solid $stroke-200; outline-offset: -1px; }
+
+// Long titles: one truncated line on wide cards, up to two lines on narrow ones (phones)
+.lf-title-clamp {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+@container (max-width: 480px) {
+  .lf-title-clamp {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    line-clamp: 2;
+    white-space: normal;
+  }
+}

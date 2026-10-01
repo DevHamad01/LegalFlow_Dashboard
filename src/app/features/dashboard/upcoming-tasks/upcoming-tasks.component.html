@@ -1,0 +1,68 @@
+<lf-card-shell class="min-h-0 flex-1" title="Upcoming Tasks" icon="list-checks">
+  <button cardActions lfButton="outline">View All</button>
+
+  <!-- Overview -->
+  <div class="overview">
+    <div class="flex flex-col gap-2">
+      <div class="flex items-start justify-between gap-2 text-label-md font-medium">
+        <h3 class="text-ink-950">Tasks Overview</h3>
+        <p class="whitespace-nowrap text-ink-600">Total {{ total }}</p>
+      </div>
+
+      <ul class="legend" role="list" aria-label="Filter tasks by status">
+        @for (b of breakdown; track b.status) {
+          <li class="legend-item" role="listitem">
+            <button
+              type="button"
+              class="legend-btn"
+              [class.is-active]="filter() === b.status"
+              [attr.aria-pressed]="filter() === b.status"
+              (click)="toggleFilter(b.status)"
+            >
+              <span class="size-2 shrink-0 rounded-8" [style.background]="color[b.status]" aria-hidden="true"></span>
+              <span class="text-para-sm font-book text-ink-950">{{ b.label }}</span>
+              <span class="text-label-sm font-medium text-ink-950">{{ b.count }}</span>
+            </button>
+            <span class="divider" aria-hidden="true"></span>
+          </li>
+        }
+      </ul>
+    </div>
+
+    <div class="segments" role="img" [attr.aria-label]="barLabel()">
+      @for (b of breakdown; track b.status) {
+        <span
+          class="segment"
+          [style.flex-grow]="b.count"
+          [style.background]="color[b.status]"
+          [class.is-dimmed]="filter() !== null && filter() !== b.status"
+          [attr.title]="b.label + ': ' + b.count"
+        ></span>
+      }
+    </div>
+  </div>
+
+  <!-- List -->
+  <p class="sr-only" aria-live="polite">
+    {{ filter() ? tasks().length + ' ' + statusLabel[filter()!] + ' tasks shown' : '' }}
+  </p>
+  <lf-scroll-area class="list-area lf-fill" label="Upcoming tasks" [gap]="8">
+    @if (tasks().length) {
+      <ul class="flex flex-col gap-1" role="list">
+        @for (t of tasks(); track t.id) {
+          <li class="row">
+            <div class="flex min-w-0 flex-1 flex-col gap-2">
+              <p class="lf-title-clamp text-label-md font-medium text-ink-950" [attr.title]="t.title">{{ t.title }}</p>
+              <p class="text-para-sm font-book text-ink-600"><time>{{ t.due }}</time></p>
+            </div>
+            <lf-badge [variant]="t.status">{{ statusLabel[t.status] }}</lf-badge>
+          </li>
+        }
+      </ul>
+    } @else {
+      <lf-empty-state icon="list-checks" title="No tasks with this status" hint="Clear the filter to see every upcoming task.">
+        <button lfButton="outline" class="mt-1" (click)="filter.set(null)">Clear filter</button>
+      </lf-empty-state>
+    }
+  </lf-scroll-area>
+</lf-card-shell>

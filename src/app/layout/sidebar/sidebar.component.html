@@ -1,0 +1,173 @@
+<!-- Mobile overlay -->
+@if (layout.isMobile()) {
+  <div
+    class="overlay fixed inset-0 z-40 bg-ink-950/40"
+    [class.is-visible]="layout.drawerOpen()"
+    aria-hidden="true"
+    (click)="layout.closeDrawer()"
+  ></div>
+}
+
+<aside
+  #panel
+  id="app-sidebar"
+  class="sidebar"
+  [class.is-collapsed]="!layout.showLabels()"
+  [class.is-drawer]="layout.isMobile()"
+  [class.is-open]="layout.drawerOpen()"
+  [attr.role]="layout.isMobile() ? 'dialog' : null"
+  [attr.aria-modal]="layout.isMobile() && layout.drawerOpen() ? 'true' : null"
+  [attr.aria-label]="layout.isMobile() ? 'Main menu' : null"
+  [attr.aria-hidden]="layout.isMobile() && !layout.drawerOpen() ? 'true' : null"
+  [attr.inert]="layout.isMobile() && !layout.drawerOpen() ? '' : null"
+  (keydown)="trapFocus($event)"
+>
+  <!-- Logo row: 52px, 16px side padding, bottom border -->
+  <div class="logo-row">
+    @if (layout.showLabels()) {
+      <a href="#" class="logo-link" aria-label="Legalflow home" (click)="select('dashboard', $event)">
+        <lf-logo />
+      </a>
+    } @else {
+      <!-- Collapsed: the logo itself expands the sidebar (the toggle is hidden) -->
+      <button
+        type="button"
+        class="logo-link logo-expand"
+        aria-label="Expand sidebar"
+        aria-controls="app-sidebar"
+        [attr.aria-expanded]="false"
+        lfTooltip="Expand sidebar"
+        (click)="layout.toggleCollapsed()"
+      >
+        <lf-logo />
+      </button>
+    }
+
+    @if (layout.isMobile()) {
+      <button
+        #closeBtn
+        type="button"
+        class="icon-btn size-10"
+        aria-label="Close menu"
+        (click)="layout.closeDrawer()"
+      >
+        <lf-icon name="close" [size]="20" />
+      </button>
+    } @else {
+      <!-- Shown only while open; hidden (and out of the tab order) when collapsed -->
+      <button
+        type="button"
+        class="toggle-btn"
+        aria-label="Collapse sidebar"
+        aria-expanded="true"
+        aria-controls="app-sidebar"
+        [attr.aria-hidden]="layout.collapsed() ? 'true' : null"
+        [attr.tabindex]="layout.collapsed() ? -1 : null"
+        (click)="layout.toggleCollapsed()"
+      >
+        <lf-icon name="chevrons-right" [size]="16" class="toggle-icon" />
+      </button>
+    }
+  </div>
+
+  <!-- Primary navigation -->
+  <nav class="nav lf-thin-scroll" aria-label="Primary">
+    <ul class="flex flex-col" role="list">
+      @for (item of items; track item.id) {
+        <li>
+          @if (item.children?.length) {
+            <button
+              type="button"
+              class="nav-row"
+              [class.is-active]="groupHasActive(item) && !isExpanded(item.id)"
+              [class.is-open]="isExpanded(item.id) && layout.showLabels()"
+              [attr.aria-expanded]="isExpanded(item.id) && layout.showLabels()"
+              [attr.aria-controls]="'group-' + item.id"
+              [attr.aria-label]="layout.showLabels() ? null : item.label"
+              [lfTooltip]="item.label"
+              [lfTooltipDisabled]="layout.showLabels()"
+              (click)="toggleGroup(item)"
+            >
+              <lf-icon [name]="item.icon" [size]="18" />
+              <span class="nav-label">{{ item.label }}</span>
+              <lf-icon name="chevron-down" [size]="16" class="nav-chevron" />
+            </button>
+            @if (layout.showLabels()) {
+              <div class="group" [class.is-open]="isExpanded(item.id)">
+                <ul [id]="'group-' + item.id" class="group-inner" role="list">
+                  @for (child of item.children; track child.id) {
+                    <li>
+                      <a
+                        href="#"
+                        class="nav-row nav-row--child"
+                        [class.is-active]="activeId() === child.id"
+                        [attr.aria-current]="activeId() === child.id ? 'page' : null"
+                        [attr.tabindex]="isExpanded(item.id) ? null : -1"
+                        (click)="select(child.id, $event)"
+                      >
+                        <span class="size-[18px] shrink-0" aria-hidden="true"></span>
+                        <span class="nav-label">{{ child.label }}</span>
+                      </a>
+                    </li>
+                  }
+                </ul>
+              </div>
+            }
+          } @else {
+            <a
+              href="#"
+              class="nav-row"
+              [class.is-active]="activeId() === item.id"
+              [attr.aria-current]="activeId() === item.id ? 'page' : null"
+              [attr.aria-label]="layout.showLabels() ? null : item.label"
+              [lfTooltip]="item.label"
+              [lfTooltipDisabled]="layout.showLabels()"
+              (click)="select(item.id, $event)"
+            >
+              <lf-icon [name]="item.icon" [size]="18" />
+              <span class="nav-label">{{ item.label }}</span>
+            </a>
+          }
+        </li>
+      }
+    </ul>
+  </nav>
+
+  <!-- Footer: Reports, Settings, user -->
+  <div class="footer">
+    <ul class="flex flex-col" role="list">
+      @for (item of footerItems; track item.id) {
+        <li>
+          <a
+            href="#"
+            class="nav-row nav-row--footer"
+            [class.is-active]="activeId() === item.id"
+            [attr.aria-current]="activeId() === item.id ? 'page' : null"
+            [attr.aria-label]="layout.showLabels() ? null : item.label"
+            [lfTooltip]="item.label"
+            [lfTooltipDisabled]="layout.showLabels()"
+            (click)="select(item.id, $event)"
+          >
+            <lf-icon [name]="item.icon" [size]="18" />
+            <span class="nav-label">{{ item.label }}</span>
+          </a>
+        </li>
+      }
+    </ul>
+    <div class="user-row">
+      <div class="flex min-w-0 items-center gap-2">
+        <lf-avatar [name]="user.sidebarName" />
+        <span class="nav-label">{{ user.sidebarName }}</span>
+      </div>
+      <button
+        type="button"
+        class="icon-btn user-menu"
+        [attr.aria-label]="'Account menu for ' + user.sidebarName"
+        [lfTooltip]="user.sidebarName"
+        [lfTooltipDisabled]="layout.showLabels()"
+      >
+        <lf-icon name="more-vertical" [size]="18" />
+      </button>
+    </div>
+  </div>
+</aside>

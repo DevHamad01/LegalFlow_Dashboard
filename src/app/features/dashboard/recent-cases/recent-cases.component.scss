@@ -1,0 +1,79 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+:host { container-type: inline-size; }
+
+// Chart (219px) + list side by side with 12px gap — stretches to fill the card on desktop
+.body {
+  display: flex;
+  flex: 1 1 auto;
+  min-height: 0;
+  gap: $space-12;
+}
+
+.overview {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: $space-12;
+  width: 219px;
+  flex-shrink: 0;
+  padding: $space-16;
+  border: 1px solid $stroke-200;
+  border-radius: $radius-16;
+  background:
+    linear-gradient(223.19deg, rgba(189, 138, 57, 0.1) 26.41%, rgba(255, 255, 255, 0) 75.27%),
+    $surface-0;
+}
+
+.overview-text { display: flex; flex-direction: column; gap: $space-12; width: 100%; }
+
+.list-area {
+  flex: 1 1 auto;
+  min-width: 0;
+  @include down($bp-lg) { max-height: 286px; }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-8;
+  padding: $space-12;
+  box-shadow: inset 0 -1px 0 $stroke-200;
+  border-radius: $radius-8;
+  background: $surface-0;
+}
+
+.case-no {
+  flex-shrink: 0;
+  color: $brand-500;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  border-radius: 2px;
+  &:hover { color: $brand-700; }
+  &:focus-visible { @include focus-ring(2px); }
+}
+
+// Narrow card: chart becomes a horizontal summary above the list
+@container (max-width: 560px) {
+  .body { flex-direction: column; }
+  .overview {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .overview-text { width: auto; }
+  .donut ::ng-deep svg { width: 128px; height: 128px; } // compact ring when stacked
+  .list-area { flex: 1 1 auto; min-height: 140px; }
+}
+@container (max-width: 360px) {
+  .overview { flex-direction: column; align-items: stretch; }
+  .donut { align-self: center; }
+  .donut ::ng-deep svg { width: 160px; height: 160px; }
+}

@@ -1,0 +1,94 @@
+@use '../../../../styles/variables' as *;
+@use '../../../../styles/mixins' as *;
+
+:host { container-type: inline-size; }
+
+// 7 equal cells, 12px gap, cells stretch to the tallest (the ones with dots)
+.strip {
+  display: flex;
+  align-items: stretch;
+  gap: $space-12;
+  flex-shrink: 0;
+}
+
+.day {
+  display: flex;
+  flex: 1 1 0;
+  min-width: 0;
+  flex-direction: column;
+  align-items: center;
+  padding: $space-8;
+  border-radius: $radius-8;
+  background: $brand-a10;
+  color: $ink-950;
+  transition: background-color 150ms, color 150ms, transform 150ms;
+
+  &:hover { background: rgba(189, 118, 57, 0.16); }
+  &:active { transform: scale(0.97); }
+  &:focus-visible { @include focus-ring(2px); }
+
+  &.is-selected {
+    background: $brand-500;
+    color: $surface-0;
+    .weekday { color: $surface-0; }
+    .dot { background: $surface-0; }
+  }
+}
+
+.weekday {
+  color: $ink-600;
+  font-size: 12px;
+  line-height: 16px;
+  font-weight: 500;
+  text-align: center;
+}
+
+.date {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 500;
+  letter-spacing: -0.36px;
+}
+
+.dots { display: flex; gap: 2px; padding-block: 2px; }
+.dot { width: 5px; height: 5px; border-radius: 999px; background: $brand-500; }
+
+.panel { display: flex; flex: 1 1 auto; min-height: 0; flex-direction: column; }
+
+.list-area {
+  flex: 1 1 auto;
+  min-height: 0;
+  @include down($bp-lg) { flex: 0 1 auto; max-height: 260px; }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: $space-8;
+  padding: $space-12;
+  border-radius: $radius-8;
+  background: $surface-0;
+}
+
+.meet-btn {
+  display: inline-flex;
+  flex-shrink: 0;
+  padding: $space-6 9px;
+  border-radius: $radius-12;
+  background: $surface-0;
+  transition: background-color 150ms;
+  &:hover { background: $surface-50; }
+  &:active { background: $surface-200; }
+  &:focus-visible { @include focus-ring(0); }
+}
+
+// Narrow cards (mobile): tighter strip so all 7 days fit without scrolling
+@container (max-width: 480px) {
+  .strip { gap: $space-4; }
+  .day { padding: $space-6 2px; }
+  .weekday { font-size: 11px; }
+  .date { font-size: 18px; line-height: 26px; letter-spacing: -0.2px; }
+  .dots { gap: 2px; }
+  .dot { width: 4px; height: 4px; }
+  .meet-btn { padding: $space-6; }
+}

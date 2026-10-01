@@ -1,0 +1,57 @@
+// Mirror of tailwind.config.js tokens, for SCSS-only rules (scrollbars, SVG fills, keyframes).
+// Keep in sync with tailwind.config.js — single source of truth for every value.
+
+// Colours
+$brand-500: #db7658;
+$brand-700: #8c4b39;
+$brand-800: #784031;
+$brand-a10: rgba(189, 138, 57, 0.1);
+$ink-950: #171717;
+$ink-600: #5c5c5c;
+$ink-400: #a3a3a3;
+$surface-0: #ffffff;
+$surface-50: #f7f7f7;
+$surface-200: #ebebeb;
+$surface-300: #d1d1d1;
+$stroke-200: #ebebeb;
+$stroke-300: #d1d1d1;
+$success-700: #178c4e;
+$warning-500: #f6b51e;
+$orange-500: #fa7319;
+$danger-500: #fb3748;
+
+// Spacing scale (Figma Scale/*)
+$space-2: 2px;
+$space-4: 4px;
+$space-6: 6px;
+$space-8: 8px;
+$space-10: 10px;
+$space-12: 12px;
+$space-16: 16px;
+$space-24: 24px;
+$space-32: 32px;
+
+// Radius (Figma Corner Radius/*)
+$radius-4: 4px;
+$radius-6: 6px;
+$radius-8: 8px;
+$radius-12: 12px;
+$radius-16: 16px;
+$radius-track: 19px;
+
+// Layout
+$sidebar-w: 212px; // Figma 200px; +12px so 15px labels + 18px icons fit without truncation
+$sidebar-w-collapsed: 120px;
+$drawer-w: 264px;
+$topbar-h: 52px;
+$scrollbar-w: 12px;
+$scrollbar-thumb-w: 8px;
+
+// Breakpoints
+$bp-xs: 390px;
+$bp-sm: 480px;
+$bp-md: 768px;
+$bp-lg: 1024px;
+
+$ease-smooth: cubic-bezier(0.2, 0, 0, 1);
+$duration: 240ms;
