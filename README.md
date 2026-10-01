@@ -1,4 +1,4 @@
-# Legalflow – Dashboard (UI/UX Engineer take-home)
+# Legalflow – Dashboard (UI/UX Engineer)
 
 A pixel-accurate Angular 18 implementation of the **LCM – Dashboard / "Dashboard - Filled"** Figma frame, built with standalone components, signals, SCSS and Tailwind CSS. All data is static mock data, with no backend.
 
